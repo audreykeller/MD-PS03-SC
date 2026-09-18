@@ -304,7 +304,8 @@ Calculate the **average** percentage of listings that were sold in Dallas **in e
 dallas_summary <- dallas_sub %>%
   group_by(month) %>%
   summarize(mean_prct_sold = mean(prct_sold, na.rm = TRUE)) 
-#na.rm = TRUE : if theres any missing (NA) datapoints in the dataset, if wont cause final calc to return NA.
+#na.rm = TRUE : if theres any missing (NA) datapoints in the dataset, 
+#it wont cause final calc to return NA.
 dallas_summary #display data frame
 ```
 :::
@@ -356,7 +357,8 @@ fewest_listings <- txhousing |>
   arrange(listings) |>
   slice(1) #selects a specific row from tibble by their position number
 
-#inline code answer: - In January of 2015, `r fewest_listings$city` had the fewest houses listed for sale with a total of `r fewest_listings$listings` houses listed.
+#inline code answer: - In January of 2015, `r fewest_listings$city` had the fewest houses 
+#listed for sale with a total of `r fewest_listings$listings` houses listed.
 ```
 
 - In January of 2015, `r fewest_listings$city` had the fewest houses listed for sale with a total of `r fewest_listings$listings` houses listed.
@@ -374,7 +376,8 @@ sales_2012 <- txhousing |>
   group_by(month) |>
   summarize(total_sales = sum(sales, na.rm = TRUE)) |>
               arrange(desc(total_sales))
-#inline code answer: - The most houses were sold In Texas during month `r sales_2012$month[1]` (June), with a total of `r format(sales_2012$total_sales[1], big.mark = ",")` houses sold.
+#inline code answer: - The most houses were sold In Texas during month `r sales_2012$month[1]` (June), 
+#with a total of `r format(sales_2012$total_sales[1], big.mark = ",")` houses sold.
 ```
 
 - The most houses were sold In Texas during month `r sales_2012$month[1]` (June), with a total of `r format(sales_2012$total_sales[1], big.mark = ",")` houses sold.
@@ -416,6 +419,7 @@ There are many statistics classes and students using the Server. To keep the ser
 - Choose **don't save** for the **Workspace image**
 - When the browser refreshes, you can click on the sign out next to your name in the top right.
 - You are signed out.
+
 :::
 
 ```{r}
