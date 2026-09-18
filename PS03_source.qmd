@@ -58,10 +58,20 @@ Examine `txhousing` in the data viewer. You can accomplish this two different wa
 ::: {.callout-important icon="false" collapse="false" title="Problem 1 Answers"}
 ```{r}
 # Type your code and comments inside the code chunk
-
+#option 1
+tail(txhousing$city, n = 1);
+#option 2
+txhousing$city[nrow(txhousing)]
+#option 3
+txhousing |>
+  slice_tail(n = 1) |>
+  pull(city)
+#option 4
+txhousing |>
+  summarize(last_city = last(city))
 ```
 
-- Wichita Falls.
+- The last city listed in the dataset is `r tail(txhousing$city, n = 1)`.
 :::
 
 ::: {.callout-note icon="false" title="Problem 2"}
@@ -253,6 +263,10 @@ Make a data set called `dallas_sub` that includes data only from the city of Dal
 txhousing |> 
   filter(city =="Dallas" & year == 2012 | year == 2013) |> dim()
 ```
+- The following code does not give the requested answer because & takes precedence over or (like PEMDAS).
+- `!` (NOT)
+- `&` `&&` Logical AND
+- `|`  `||` Logical OR
 :::
 
 ::: {.callout-important icon="false" collapse="false" title="Problem 4 Answers"}
@@ -260,7 +274,8 @@ txhousing |>
 # Type your code and comments inside the code chunk
 txhousing |>
   filter(city == "Dallas", year == 2012 | year == 2013) -> dallas_sub
-dim(dallas_sub)
+dim(dallas_sub) #verify the dimensions, here it says dallas_sub contains 24 rows and 8 columns
+head(dallas_sub) #view the first six rows
 
 ```
 :::
@@ -275,7 +290,7 @@ Add a column to the `dallas_sub` data set called `prct_sold` that calculates the
 dallas_sub <- dallas_sub %>%
   mutate(prct_sold = sales / listings * 100)
 
-tail(dallas_sub, 6)
+tail(dallas_sub, 6) #views the last 6 rows of the dataset
 ```
 :::
 
@@ -288,8 +303,9 @@ Calculate the **average** percentage of listings that were sold in Dallas **in e
 # Type your code and comments inside the code chunk
 dallas_summary <- dallas_sub %>%
   group_by(month) %>%
-  summarize(mean_prct_sold = mean(prct_sold))
-dallas_summary
+  summarize(mean_prct_sold = mean(prct_sold, na.rm = TRUE)) 
+#na.rm = TRUE : if theres any missing (NA) datapoints in the dataset, if wont cause final calc to return NA.
+dallas_summary #display data frame
 ```
 :::
 
@@ -302,6 +318,7 @@ Arrange the `dallas_summary` in `desc`ending order based on the average percenta
 # Type your code and comments inside the code chunk
 dallas_summary |> 
   arrange(desc(mean_prct_sold))
+#you do not need to save results means dont need to save to anything, like with <-
 ```
 :::
 
@@ -334,12 +351,15 @@ In January of 2015, what city had the fewest houses listed for sale? Report the 
 ::: {.callout-important icon="false" collapse="false" title="Problem 9 Answers"}
 ```{r}
 # Type your code and comments inside the code chunk
-txhousing |> 
+fewest_listings <- txhousing |> 
   filter(year == 2015, month == 1) |>
-  arrange(listings) 
+  arrange(listings) |>
+  slice(1) #selects a specific row from tibble by their position number
+
+#inline code answer: - In January of 2015, `r fewest_listings$city` had the fewest houses listed for sale with a total of `r fewest_listings$listings` houses listed.
 ```
 
-- In January of 2015, 'r txhousing$city' had the fewest houses listed for sale with a total of 'r txhousing$listings' listings.
+- In January of 2015, `r fewest_listings$city` had the fewest houses listed for sale with a total of `r fewest_listings$listings` houses listed.
 :::
 
 ::: {.callout-note icon="false" title="Problem 10"}
@@ -349,14 +369,15 @@ In 2012, in which month were the most houses sold in Texas? Report the month wer
 ::: {.callout-important icon="false" collapse="false" title="Problem 10 Answers"}
 ```{r}
 # Type your code and comments inside the code chunk
-txhousing |>
+sales_2012 <- txhousing |>
   filter(year == 2012) |>
   group_by(month) |>
-  summarize(total_sales = sum(sales)) |>
+  summarize(total_sales = sum(sales, na.rm = TRUE)) |>
               arrange(desc(total_sales))
+#inline code answer: - The most houses were sold In Texas during month `r sales_2012$month[1]` (June), with a total of `r format(sales_2012$total_sales[1], big.mark = ",")` houses sold.
 ```
 
-- The most houses were sold In Texas on August and there were 29,995.
+- The most houses were sold In Texas during month `r sales_2012$month[1]` (June), with a total of `r format(sales_2012$total_sales[1], big.mark = ",")` houses sold.
 :::
 
 ::: {.callout-note icon="false" title="Problem 11"}
@@ -366,7 +387,13 @@ Generate a **single** table that shows the total number of houses sold in **Aust
 ::: {.callout-important icon="false" collapse="false" title="Problem 11 Answers"}
 ```{r}
 # Type your code and comments inside the code chunk
+problem_11_table <- txhousing |>
+  filter((city == "Austin" | city == "Dallas"),
+  (year == 2000 | year == 2001)) |>
+group_by(city) |>
+  summarize(total_sales = sum(sales, na.rm = TRUE))
 
+problem_11_table
 ```
 :::
 
